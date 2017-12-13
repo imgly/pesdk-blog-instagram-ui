@@ -1,0 +1,10 @@
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/PhotoEditorSDK/pesdk-ios-build-8.2.0"
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/PhotoEditorSDK"
+LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
+OTHER_CFLAGS = $(inherited)  -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/PhotoEditorSDK"
+OTHER_LDFLAGS = $(inherited) -framework "AVFoundation" -framework "Accelerate" -framework "CFNetwork" -framework "CoreGraphics" -framework "CoreImage" -framework "CoreLocation" -framework "CoreMotion" -framework "CoreText" -framework "Foundation" -framework "GLKit" -framework "ImageIO" -framework "MobileCoreServices" -framework "OpenGLES" -framework "PhotoEditorSDK" -framework "Photos" -framework "UIKit"
+PODS_BUILD_DIR = $BUILD_DIR
+PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
+PODS_PODFILE_DIR_PATH = ${SRCROOT}/.
+PODS_ROOT = ${SRCROOT}/Pods
