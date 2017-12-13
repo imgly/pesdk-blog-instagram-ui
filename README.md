@@ -2,8 +2,8 @@
   <img src="http://static.photoeditorsdk.com/logo.png" />
 </p>
 
-# Code for [How to build Instagram’s Story Editor in a Day](web.de)
-This repository contains all code used to build the Instagram UI shown in our [blog post](web.de). The [PhotoEditor SDK](https://www.photoeditorsdk.com/?utm_campaign=Projects&utm_source=Github&utm_medium=Side_Projects&utm_content=Instagram-UI) is integrated using [CocoaPods](https://cocoapods.org).
+# Code for [How to build Instagram’s Story Editor in a Day](https://blog.photoeditorsdk.com/how-to-build-instagrams-story-editor-in-a-day-23be9adff9b)
+This repository contains all code used to build the Instagram UI shown in our [blog post](https://blog.photoeditorsdk.com/how-to-build-instagrams-story-editor-in-a-day-23be9adff9b). The [PhotoEditor SDK](https://www.photoeditorsdk.com/?utm_campaign=Projects&utm_source=Github&utm_medium=Side_Projects&utm_content=Instagram-UI) is integrated using [CocoaPods](https://cocoapods.org).
 
 ## Note
 The PhotoEditor SDK is a product of 9elements GmbH. 
