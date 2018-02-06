@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ly.img.android.ui.widgets.EditorRootView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ly.img.android.sdk.views.EditorPreview
+        android:id="@+id/editorImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <!-- Menu Panel UI-->
+    <include
+        layout="@layout/instagram_ui_menu"/>
+    <!-- Sticker Panel UI -->
+    <ly.img.pesdk_instagram_ui.app.instagram_ui.panel.StickerPanel
+        android:id="@+id/iui_sticker_ui"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <!-- Brush Panel UI -->
+    <ly.img.pesdk_instagram_ui.app.instagram_ui.panel.BrushPanel
+        android:id="@+id/iui_brush_ui"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <!-- Text Panel UI -->
+    <ly.img.pesdk_instagram_ui.app.instagram_ui.panel.TextPanel
+        android:id="@+id/iui_text_ui"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <!-- Export Dialog -->
+    <ly.img.pesdk_instagram_ui.app.instagram_ui.view.ProgressWindow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+</ly.img.android.ui.widgets.EditorRootView>

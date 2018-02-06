@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="iui_seekbar_rotation_rtl">0</integer>
+</resources>
