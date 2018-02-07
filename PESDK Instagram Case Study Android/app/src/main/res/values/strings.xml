@@ -14,7 +14,7 @@
   -->
 
 <resources>
-    <string name="app_name">ImgLy Editor</string>
+    <string name="app_name">ImgLy Editor - Instagram UI</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
