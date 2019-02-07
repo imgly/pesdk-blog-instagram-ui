@@ -18,8 +18,8 @@ package ly.img.pesdk_instagram_ui.app.instagram_ui;
 import android.app.Activity;
 import android.app.Fragment;
 
-import ly.img.android.ui.activities.ImgLyIntent;
-import ly.img.android.ui.utilities.PermissionRequest;
+import ly.img.android.pesdk.ui.activity.ImgLyIntent;
+import ly.img.android.pesdk.ui.utils.PermissionRequest;
 
 @SuppressWarnings("unused, WeakerAccess")
 public class InstagramUIBuilder extends ImgLyIntent {

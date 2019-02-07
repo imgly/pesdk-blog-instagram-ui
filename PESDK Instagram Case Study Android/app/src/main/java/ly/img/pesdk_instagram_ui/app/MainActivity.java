@@ -17,8 +17,6 @@ package ly.img.pesdk_instagram_ui.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -37,14 +35,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import ly.img.android.PESDK;
-import ly.img.android.sdk.models.constant.Directory;
-import ly.img.android.sdk.models.state.EditorLoadSettings;
-import ly.img.android.sdk.models.state.EditorSaveSettings;
-import ly.img.android.sdk.models.state.manager.SettingsList;
-import ly.img.android.sdk.utils.PrefManger;
-import ly.img.android.ui.activities.ImgLyIntent;
+import ly.img.android.pesdk.backend.model.constant.Directory;
+import ly.img.android.pesdk.backend.model.state.EditorLoadSettings;
+import ly.img.android.pesdk.backend.model.state.EditorSaveSettings;
+import ly.img.android.pesdk.backend.model.state.manager.SettingsList;
+import ly.img.android.pesdk.ui.activity.ImgLyIntent;
+import ly.img.android.pesdk.ui.utils.PermissionRequest;
+import ly.img.android.pesdk.utils.PrefManger;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.InstagramUIBuilder;
-import ly.img.android.ui.utilities.PermissionRequest;
 
 public class MainActivity extends Activity implements PermissionRequest.Response {
 
@@ -70,7 +68,7 @@ public class MainActivity extends Activity implements PermissionRequest.Response
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(intent, GALLERY_IMAGE_RESULT);
                 } else {
-                    Toast.makeText(PESDK.getAppContext(), ly.img.android.R.string.imgly_issue_gallery_not_found, Toast.LENGTH_LONG).show();
+                    Toast.makeText(PESDK.getAppContext(), "NOT FOUND", Toast.LENGTH_LONG).show();
                 }
             }
         });

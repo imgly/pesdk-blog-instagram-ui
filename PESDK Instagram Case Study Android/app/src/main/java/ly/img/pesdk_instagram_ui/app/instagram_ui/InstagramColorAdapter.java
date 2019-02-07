@@ -1,9 +1,7 @@
 package ly.img.pesdk_instagram_ui.app.instagram_ui;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -11,13 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ly.img.android.pesdk.ui.panels.item.ColorItem;
 import ly.img.pesdk_instagram_ui.app.R;
 
 import java.util.List;
 
-import ly.img.android.sdk.models.config.interfaces.ColorConfigInterface;
-import ly.img.android.sdk.models.config.interfaces.DataSourceInterface;
-import ly.img.android.ui.adapter.DataSourceListAdapter;
 
 /**
  * Created by niklasbachmann on 27.11.17.
@@ -27,16 +23,16 @@ public class InstagramColorAdapter extends RecyclerView.Adapter<InstagramColorAd
 
     final private ListItemClickListener onClickListener;
 
-    private List<ColorConfigInterface> colorData;
+    private List<ColorItem> colorData;
 
     private int selectedPosition = -1;
 
-    public void setColorData(List<ColorConfigInterface> colorData) {
+    public void setColorData(List<ColorItem> colorData) {
         this.colorData = colorData;
     }
 
     public interface ListItemClickListener {
-        void onColorListItemClick(ColorConfigInterface clickedItem);
+        void onColorListItemClick(ColorItem clickedItem);
     }
 
 
@@ -77,7 +73,7 @@ public class InstagramColorAdapter extends RecyclerView.Adapter<InstagramColorAd
     }
 
     protected class ColorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ColorConfigInterface lastBoundData;
+        private ColorItem lastBoundData;
         private View listItemColorView;
 
         public ColorViewHolder (View itemView) {
@@ -89,7 +85,7 @@ public class InstagramColorAdapter extends RecyclerView.Adapter<InstagramColorAd
         protected void bind(int listIndex) {
             lastBoundData = colorData.get(listIndex);
             GradientDrawable gradientDrawable = (GradientDrawable) itemView.getResources().getDrawable(R.drawable.iui_rounded_color_list_item_background);
-            gradientDrawable.setColor(lastBoundData.getColor());
+            gradientDrawable.setColor(lastBoundData.getData().getColor());
             listItemColorView.setBackgroundDrawable(gradientDrawable);
             setSelectionState(selectedPosition == listIndex);
         }
@@ -104,7 +100,7 @@ public class InstagramColorAdapter extends RecyclerView.Adapter<InstagramColorAd
         }
     }
 
-    public void setSelection(ColorConfigInterface item) {
+    public void setSelection(ColorItem item) {
         if (colorData != null) {
             notifyItemChanged(selectedPosition, new Object()); // Old Deselect
             selectedPosition = colorData.indexOf(item);

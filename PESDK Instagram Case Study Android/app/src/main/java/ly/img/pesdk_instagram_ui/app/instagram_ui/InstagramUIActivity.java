@@ -26,6 +26,28 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import ly.img.android.pesdk.annotations.OnEvent;
+import ly.img.android.pesdk.annotations.StateEvents;
+import ly.img.android.pesdk.backend.model.chunk.SourceRequestAnswerI;
+import ly.img.android.pesdk.backend.model.state.EditorLoadSettings;
+import ly.img.android.pesdk.backend.model.state.EditorSaveSettings;
+import ly.img.android.pesdk.backend.model.state.EditorShowState;
+import ly.img.android.pesdk.backend.model.state.HistoryState;
+import ly.img.android.pesdk.backend.model.state.LayerListSettings;
+import ly.img.android.pesdk.backend.model.state.ProgressState;
+import ly.img.android.pesdk.backend.model.state.layer.ImageStickerLayerSettings;
+import ly.img.android.pesdk.backend.model.state.layer.TextLayerSettings;
+import ly.img.android.pesdk.backend.model.state.manager.StateHandler;
+import ly.img.android.pesdk.backend.operator.export.Operator;
+import ly.img.android.pesdk.backend.views.EditorPreview;
+import ly.img.android.pesdk.ui.activity.ImgLyActivity;
+import ly.img.android.pesdk.ui.activity.ImgLyIntent;
+import ly.img.android.pesdk.ui.model.state.UiConfigBrush;
+import ly.img.android.pesdk.ui.utils.PermissionRequest;
+import ly.img.android.pesdk.ui.widgets.ConfirmPopupView;
+import ly.img.android.pesdk.utils.OrientationSensor;
+import ly.img.android.pesdk.utils.ThreadUtils;
+import ly.img.android.pesdk.utils.TimeOut;
 import ly.img.pesdk_instagram_ui.app.PESDKEvents;
 import ly.img.pesdk_instagram_ui.app.R;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.panel.BrushPanel;
@@ -37,31 +59,6 @@ import ly.img.pesdk_instagram_ui.app.instagram_ui.widget.ConfirmPopupWindow;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import ly.img.android.acs.Camera;
-import ly.img.android.sdk.models.chunk.SourceRequestAnswerI;
-import ly.img.android.sdk.models.constant.EditMode;
-import ly.img.android.sdk.models.state.EditorLoadSettings;
-import ly.img.android.sdk.models.state.EditorSaveSettings;
-import ly.img.android.sdk.models.state.EditorShowState;
-import ly.img.android.sdk.models.state.HistoryState;
-import ly.img.android.sdk.models.state.LayerListSettings;
-import ly.img.android.sdk.models.state.ProgressState;
-import ly.img.android.sdk.models.state.layer.BrushLayerSettings;
-import ly.img.android.sdk.models.state.layer.ImageStickerLayerSettings;
-import ly.img.android.sdk.models.state.layer.TextLayerSettings;
-import ly.img.android.sdk.models.state.manager.StateHandler;
-import ly.img.android.sdk.operator.export.Operator;
-import ly.img.android.sdk.utils.ThreadUtils;
-import ly.img.android.sdk.utils.TimeOut;
-import ly.img.android.sdk.views.EditorPreview;
-import ly.img.android.ui.activities.ImgLyActivity;
-import ly.img.android.ui.activities.ImgLyIntent;
-import ly.img.android.ui.utilities.OrientationSensor;
-import ly.img.android.ui.utilities.PermissionRequest;
-import ly.img.android.ui.widgets.ConfirmPopupView;
-import ly.img.sdk.android.annotations.OnEvent;
-import ly.img.sdk.android.annotations.StateEvents;
 
 @StateEvents
 public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseListener, TimeOut.Callback {
@@ -349,7 +346,7 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
     void onLayerTouchEnd() {
 
         if (editorState.getEditMode() == EditMode.BRUSH) {
-            historyState.save(1, BrushLayerSettings.class);
+            historyState.save(1, UiConfigBrush.class);
             brushPanel.onBrushEnd();
         }
 

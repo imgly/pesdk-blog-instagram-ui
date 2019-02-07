@@ -19,23 +19,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import ly.img.android.pesdk.backend.model.chunk.RectRecycler;
+import ly.img.android.pesdk.backend.model.config.FontAsset;
+import ly.img.android.pesdk.backend.model.config.TextStickerConfig;
+import ly.img.android.pesdk.backend.model.state.AssetConfig;
+import ly.img.android.pesdk.backend.model.state.EditorShowState;
+import ly.img.android.pesdk.backend.model.state.LayerListSettings;
+import ly.img.android.pesdk.backend.model.state.layer.TextLayerSettings;
+import ly.img.android.pesdk.backend.model.state.manager.StateHandler;
+import ly.img.android.pesdk.backend.views.abstracts.ImgLyUIRelativeContainer;
+import ly.img.android.pesdk.ui.model.state.UiConfigText;
+import ly.img.android.pesdk.ui.panels.item.ColorItem;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.InstagramColorAdapter;
 
 import ly.img.pesdk_instagram_ui.app.R;
 
 import ly.img.android.PESDK;
-import ly.img.android.sdk.models.chunk.RectRecycler;
-import ly.img.android.sdk.models.config.TextStickerConfig;
-import ly.img.android.sdk.models.config.interfaces.ColorConfigInterface;
-import ly.img.android.sdk.models.config.interfaces.StickerConfigInterface;
-import ly.img.android.sdk.models.constant.EditMode;
-import ly.img.android.sdk.models.state.EditorShowState;
-import ly.img.android.sdk.models.state.LayerListSettings;
-import ly.img.android.sdk.models.state.PESDKConfig;
-import ly.img.android.sdk.models.state.layer.StickerLayerSettings;
-import ly.img.android.sdk.models.state.layer.TextLayerSettings;
-import ly.img.android.sdk.models.state.manager.StateHandler;
-import ly.img.android.sdk.views.abstracts.ImgLyUIRelativeContainer;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.widget.TextAlignButton;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.widget.TextFillButton;
 
@@ -59,6 +58,8 @@ public class TextPanel extends ImgLyUIRelativeContainer implements InstagramColo
     private int textBgColor = DEFAULT_BG_COLOR;
 
     private TextLayerSettings currentTextStickerConfig;
+
+    private AssetConfig assetConfig;
 
     private boolean isTextEditing = false;
 
@@ -103,7 +104,7 @@ public class TextPanel extends ImgLyUIRelativeContainer implements InstagramColo
         textColorList = (RecyclerView) findViewById(R.id.rv_text_colors);
 
         textColorAdapter = new InstagramColorAdapter(this);
-        textColorAdapter.setColorData(getStateHandler().getStateModel(PESDKConfig.class).getTextColorConfig());
+        textColorAdapter.setColorData(getStateHandler().getStateModel(UiConfigText.class).getTextColorList());
 
         textColorList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true));
         textColorList.setHasFixedSize(true);
@@ -164,7 +165,10 @@ public class TextPanel extends ImgLyUIRelativeContainer implements InstagramColo
     @Override
     protected void onAttachedToUI(StateHandler stateHandler) {
         super.onAttachedToUI(stateHandler);
+
+        assetConfig = stateHandler.getSettingsModel(AssetConfig.class);
         editorState = stateHandler.getStateModel(EditorShowState.class);
+
         registerLayoutHeightListener();
     }
 
@@ -231,7 +235,7 @@ public class TextPanel extends ImgLyUIRelativeContainer implements InstagramColo
     }
 
     public void onTextChanged(@NonNull String text, Paint.Align align) {
-        TextStickerConfig newConfig = new TextStickerConfig(text, align, getStateHandler().getStateModel(PESDKConfig.class).getFontConfig().get(0), textColor, textBgColor);
+        TextStickerConfig newConfig = new TextStickerConfig(text, align, getStateHandler().getStateModel(UiConfigText.class).getFontList().get(0).getData(assetConfig.getAssetMap(FontAsset.class)), textColor, textBgColor);
         if (isTextEditing) {
             setTextSticker(newConfig);
         } else {
@@ -240,24 +244,24 @@ public class TextPanel extends ImgLyUIRelativeContainer implements InstagramColo
         isTextEditing = false;
     }
 
-    private void setTextSticker(StickerConfigInterface textSticker) {
+    private void setTextSticker(TextStickerConfig textSticker) {
         currentTextStickerConfig.setStickerConfig(textSticker);
     }
 
-    private void addTextSticker(StickerConfigInterface textSticker) {
-        StickerLayerSettings stickerLayerSettings = new TextLayerSettings(textSticker);
+    private void addTextSticker(TextStickerConfig textSticker) {
+        TextLayerSettings stickerLayerSettings = new TextLayerSettings(textSticker);
         getLayerListSettings().addLayer(stickerLayerSettings);
         getLayerListSettings().setSelected(stickerLayerSettings);
     }
 
     @Override
-    public void onColorListItemClick(ColorConfigInterface clickedItem) {
+    public void onColorListItemClick(ColorItem clickedItem) {
 
         if (textFillButton.getTextFillState()) {
-            textBgColor = clickedItem.getColor();
+            textBgColor = clickedItem.getData().getColor();
             textInputField.setBackgroundColor(textBgColor);
         } else {
-            textColor = clickedItem.getColor();
+            textColor = clickedItem.getData().getColor();
             textInputField.setTextColor(textColor);
         }
 
@@ -333,5 +337,4 @@ public class TextPanel extends ImgLyUIRelativeContainer implements InstagramColo
             animatorSet.start();
         }
     }
-
 }

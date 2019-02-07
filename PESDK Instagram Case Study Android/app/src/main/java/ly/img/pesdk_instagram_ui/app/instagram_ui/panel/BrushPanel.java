@@ -1,7 +1,5 @@
 package ly.img.pesdk_instagram_ui.app.instagram_ui.panel;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,22 +10,21 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import ly.img.android.pesdk.annotations.OnEvent;
+import ly.img.android.pesdk.backend.brush.models.Brush;
+import ly.img.android.pesdk.backend.brush.models.Painting;
+import ly.img.android.pesdk.backend.model.state.BrushSettings;
+import ly.img.android.pesdk.backend.model.state.EditorShowState;
+import ly.img.android.pesdk.backend.model.state.HistoryState;
+import ly.img.android.pesdk.backend.model.state.manager.StateHandler;
+import ly.img.android.pesdk.backend.views.abstracts.ImgLyUIRelativeContainer;
+import ly.img.android.pesdk.ui.model.state.UiConfigBrush;
+import ly.img.android.pesdk.ui.panels.item.ColorItem;
 import ly.img.pesdk_instagram_ui.app.R;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.InstagramColorAdapter;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.widget.BrushUndoButton;
 
 import ly.img.android.PESDKEvents;
-import ly.img.android.sdk.brush.models.Brush;
-import ly.img.android.sdk.brush.models.Painting;
-import ly.img.android.sdk.models.config.interfaces.ColorConfigInterface;
-import ly.img.android.sdk.models.constant.EditMode;
-import ly.img.android.sdk.models.state.EditorShowState;
-import ly.img.android.sdk.models.state.HistoryState;
-import ly.img.android.sdk.models.state.PESDKConfig;
-import ly.img.android.sdk.models.state.layer.BrushLayerSettings;
-import ly.img.android.sdk.models.state.manager.StateHandler;
-import ly.img.android.sdk.views.abstracts.ImgLyUIRelativeContainer;
-import ly.img.sdk.android.annotations.OnEvent;
 
 /**
  * Created by niklasbachmann on 06.12.17.
@@ -39,7 +36,7 @@ public class BrushPanel extends ImgLyUIRelativeContainer implements InstagramCol
 
     private static final int ANIMATION_DURATION = 100;
 
-    private BrushLayerSettings brushSettings;
+    private BrushSettings brushSettings;
 
     private EditorShowState editorState;
     private HistoryState historyState;
@@ -93,7 +90,7 @@ public class BrushPanel extends ImgLyUIRelativeContainer implements InstagramCol
         brushSeekBarPositionX = brushSizeSeekBarLayout.getX();
 
         brushColorAdapter = new InstagramColorAdapter(this);
-        brushColorAdapter.setColorData(getStateHandler().getStateModel(PESDKConfig.class).getBrushColors());
+        brushColorAdapter.setColorData(getStateHandler().getStateModel(UiConfigBrush.class).getBrushColorList());
 
         brushColorList.setLayoutManager(
           new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true)
@@ -126,7 +123,7 @@ public class BrushPanel extends ImgLyUIRelativeContainer implements InstagramCol
     @Override
     protected void onAttachedToUI(StateHandler stateHandler) {
         super.onAttachedToUI(stateHandler);
-        brushSettings = stateHandler.getStateModel(BrushLayerSettings.class);
+        brushSettings = stateHandler.getStateModel(BrushSettings.class);
         editorState = stateHandler.getStateModel(EditorShowState.class);
         historyState = stateHandler.getStateModel(HistoryState.class);
         brushSettings.setBrushHardness(1f);
@@ -143,14 +140,16 @@ public class BrushPanel extends ImgLyUIRelativeContainer implements InstagramCol
     }
 
     private void onPanelOpen() {
-        editorState.setEditMode(EditMode.BRUSH);
+        //editorState.setEditMode(EditMode.BRUSH);
+        brushSettings.setInEditMode(true);
+
         brushSettings.setBrushColor(DEFAULT_COLOR);
         brushColorAdapter.setSelection(null);
         if (!hasInitSaveState) {
             Painting painting = brushSettings.getPainting();
             painting.startPaintChunk(new Brush(0.1, 1, 0));
             painting.finalizePaintChunk();
-            historyState.save(1, BrushLayerSettings.class);
+            historyState.save(1, BrushSettings.class);
             hasInitSaveState = true;
         }
     }
@@ -168,8 +167,8 @@ public class BrushPanel extends ImgLyUIRelativeContainer implements InstagramCol
     }
 
     @Override
-    public void onColorListItemClick(ColorConfigInterface clickedItem) {
-        brushSettings.setBrushColor(clickedItem.getColor());
+    public void onColorListItemClick(ColorItem clickedItem) {
+        brushSettings.setBrushColor(clickedItem.getData().getColor());
         brushColorAdapter.setSelection(clickedItem);
     }
 
@@ -218,5 +217,4 @@ public class BrushPanel extends ImgLyUIRelativeContainer implements InstagramCol
     public void onBrushEnd() {
         brushUndoButton.setUndoStep(true);
     }
-
 }

@@ -1,36 +1,67 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url "https://artifactory.9elements.com/artifactory/imgly"
-        }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
-        classpath 'com.mutualmobile.gradle.plugins:dexinfo:0.1.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    }
-}
+// Apply the Android Plugin
 apply plugin: 'com.android.application'
-apply plugin: 'com.mutualmobile.gradle.plugins.dexinfo'
-apply plugin: 'com.neenbedankt.android-apt'
 
-repositories {
-    jcenter()
+//apply plugin: 'com.mutualmobile.gradle.plugins.dexinfo'
+//apply plugin: 'com.neenbedankt.android-apt'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+// Apply the PESDKPlugin
+apply plugin: 'ly.img.android.pesdk'
+
+// Configure the PESDKPlugin
+pesdkConfig {
+
+    licencePath "LICENSE" // Name of the Licence file in the asset folder
+
+    // If you use another supportLibVersion ('com.android.support'), change this version here to update your own supportLibVersion
+    supportLibVersion "27.1.1"
+
+    // Define the modules you are need
+    modules {
+        // Add all the backend modules you need
+        include 'ly.img.android.pesdk.operation:text'
+        include 'ly.img.android.pesdk.operation:brush'
+        include 'ly.img.android.pesdk.operation:filter'
+        include 'ly.img.android.pesdk.operation:sticker'
+        include 'ly.img.android.pesdk.operation:abstract-sticker'
+
+        // Add all the UI modules you are need
+        include 'ly.img.android.pesdk.ui.mobile_ui:core'
+        include 'ly.img.android.pesdk.ui.mobile_ui:brush'
+        include 'ly.img.android.pesdk.ui.mobile_ui:filter'
+        include 'ly.img.android.pesdk.ui.mobile_ui:sticker'
+
+
+
+        // Add asset packs if you need
+        include 'ly.img.android.pesdk.assets:font-basic'
+        include 'ly.img.android.pesdk.assets:filter-basic'
+        include 'ly.img.android.pesdk.assets:sticker-shapes'
+        include 'ly.img.android.pesdk.assets:sticker-emoticons'
+    }
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "ly.img.pesdk_instagram_ui.app"
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 28
         versionCode 1
-        versionName "5.0.16"
+        versionName "1.0"
         renderscriptTargetApi 23
         renderscriptSupportModeEnabled true
+    }
+
+    /* Set Java Language level to Java 1.8+ */
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -49,10 +80,3 @@ android {
 
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    compile 'ly.img.android:photo-editor-sdk:5.0.16'
-    apt 'ly.img.android:build-processor:5.0.16'
-
-}

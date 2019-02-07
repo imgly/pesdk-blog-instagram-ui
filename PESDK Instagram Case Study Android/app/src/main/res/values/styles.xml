@@ -20,7 +20,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    //Text Button Style
+    <!-- Text Button Style -->
     <style name="iuiTextButtonStyle">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#FFFFFFFF</item>
@@ -37,7 +37,7 @@
         <item name="android:paddingRight">4dp</item>
     </style>
 
-    //Image Button Style
+    <!-- Image Button Style -->
     <style name="iuiImageButtonStyle">
         <item name="android:background">#00000000</item>
         <item name="android:layout_margin">4dp</item>

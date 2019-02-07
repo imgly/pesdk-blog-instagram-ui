@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: ly.img.android.pesdk:core:6.2.1@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/core-6.2.1.aar/4e97daab552749f2d8e0f34f13e64dca/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/core-6.2.1.aar/4e97daab552749f2d8e0f34f13e64dca/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/core-6.2.1.aar/4e97daab552749f2d8e0f34f13e64dca/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -30,7 +30,7 @@
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/imgly_photo_editor_export_progress_unknown"
+        android:text="WAITn"
         android:textSize="14sp"
         android:textColor="@color/iui_black"
         android:layout_alignParentBottom="true"

@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import ly.img.android.PESDK;
-import ly.img.android.sdk.models.state.manager.SettingsList;
 
 
 public class Application extends android.app.Application {

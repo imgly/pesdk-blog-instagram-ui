@@ -5,16 +5,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import ly.img.pesdk_instagram_ui.app.R;
 
 import java.util.List;
 
-import ly.img.android.sdk.decoder.ImageSource;
-import ly.img.android.sdk.models.config.interfaces.StickerConfigInterface;
-import ly.img.android.sdk.models.config.interfaces.StickerListConfigInterface;
-import ly.img.android.ui.widgets.ImageSourceView;
+import ly.img.android.pesdk.ui.panels.item.ImageStickerItem;
+import ly.img.android.pesdk.ui.widgets.ImageSourceView;
+import ly.img.pesdk_instagram_ui.app.R;
+
+
 
 /**
  * Created by niklasbachmann on 28.11.17.
@@ -24,15 +22,15 @@ public class InstagramStickerAdapter extends RecyclerView.Adapter<InstagramStick
 
     final private ListItemClickListener mOnClickListener;
 
-    private List<StickerConfigInterface> stickerData;
+    private List<ImageStickerItem> stickerData;
 
-    public void setStickerData(List<StickerConfigInterface> stickerData) {
+    public void setStickerData(List<ImageStickerItem> stickerData) {
         this.stickerData = stickerData;
 
     }
 
     public interface ListItemClickListener {
-        void onStickerListItemClick(StickerConfigInterface clickedSticker);
+        void onStickerListItemClick(ImageStickerItem clickedSticker);
     }
 
 
@@ -69,7 +67,7 @@ public class InstagramStickerAdapter extends RecyclerView.Adapter<InstagramStick
     class StickerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageSourceView listItemStickerView;
 
-        StickerConfigInterface lastBindedSticker;
+        ImageStickerItem lastBindedSticker;
 
 
         public StickerViewHolder (View itemView) {
@@ -84,7 +82,7 @@ public class InstagramStickerAdapter extends RecyclerView.Adapter<InstagramStick
 
             lastBindedSticker = stickerData.get(listIndex);
 
-            listItemStickerView.setImageSource(lastBindedSticker.getStickerSource());
+            listItemStickerView.setImageSource(lastBindedSticker.getData().getDgetStickerSource());
 
         }
 
