@@ -1,5 +1,42 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'ly.img.android.sdk'
+
+
+imglyConfig {
+
+    pesdk {
+        enabled true
+        licencePath 'LICENSE.dms'
+    }
+
+    // If you use another supportLibVersion ('com.android.support'), change this version here to update your own supportLibVersion
+    supportLibVersion "28.0.0"
+
+    // Define the modules you are need
+    modules {
+        // Add all the UI modules you are need
+        include 'ui:core'
+
+        include 'backend:text'
+        include 'backend:brush'
+        include 'backend:camera'
+        include 'backend:sticker'
+        include 'backend:text-design'
+
+        // Add the serializer if you need
+        include 'backend:serializer'
+
+        // Add asset packs if you need
+        include 'assets:font-basic'
+        include 'assets:frame-basic'
+        include 'assets:filter-basic'
+        include 'assets:overlay-basic'
+        include 'assets:sticker-shapes'
+        include 'assets:sticker-emoticons'
+    }
+}
+
 repositories {
     jcenter()
     google()
@@ -11,12 +48,17 @@ android {
 
     defaultConfig {
         applicationId "ly.img.pesdk_instagram_ui.app"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
-        versionName "5.0.16"
-        renderscriptTargetApi 23
-        renderscriptSupportModeEnabled true
+        versionCode 2
+        versionName "7.0.9"
+//        renderscriptTargetApi 23
+//        renderscriptSupportModeEnabled true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -33,21 +75,21 @@ android {
         }
     }
 
-    packagingOptions {
-        pickFirst 'lib/armeabi-v7a/libRSSupport.so'
-        pickFirst 'lib/x86/libRSSupport.so'
-        pickFirst 'lib/mips/libRSSupport.so'
-        pickFirst 'lib/armeabi-v7a/librsjni.so'
-        pickFirst 'lib/x86/librsjni.so'
-        pickFirst 'lib/mips/librsjni.so'
-    }
+//    packagingOptions {
+//        pickFirst 'lib/armeabi-v7a/libRSSupport.so'
+//        pickFirst 'lib/x86/libRSSupport.so'
+//        pickFirst 'lib/mips/libRSSupport.so'
+//        pickFirst 'lib/armeabi-v7a/librsjni.so'
+//        pickFirst 'lib/x86/librsjni.so'
+//        pickFirst 'lib/mips/librsjni.so'
+//    }
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api 'ly.img.android:photo-editor-sdk:5.0.16'
-    annotationProcessor 'ly.img.android:build-processor:5.0.16'
+//    api 'ly.img.android:photo-editor-sdk:5.0.16'
+//    annotationProcessor 'ly.img.android:build-processor:5.0.16'
 
 }
