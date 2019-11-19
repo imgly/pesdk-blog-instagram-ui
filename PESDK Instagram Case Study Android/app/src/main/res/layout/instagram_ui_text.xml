@@ -20,8 +20,7 @@
             android:gravity="center"
             android:layout_centerInParent="true"
             android:textColor="#FFFFFFFF"
-            android:imeOptions="actionDone"
-            android:inputType="textCapSentences|textAutoCorrect"
+            android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
             android:background="#00000000"
             android:maxLines="50"
             android:lines="5"/>

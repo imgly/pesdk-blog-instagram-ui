@@ -5,20 +5,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 
+import ly.img.android.pesdk.backend.model.config.ImageStickerAsset;
+import ly.img.android.pesdk.backend.model.state.EditorShowState;
+import ly.img.android.pesdk.backend.model.state.LayerListSettings;
+import ly.img.android.pesdk.backend.model.state.layer.ImageStickerLayerSettings;
+import ly.img.android.pesdk.backend.model.state.layer.SpriteLayerSettings;
+import ly.img.android.pesdk.backend.model.state.manager.StateHandler;
+import ly.img.android.pesdk.backend.views.abstracts.ImgLyUIRelativeContainer;
 import ly.img.pesdk_instagram_ui.app.R;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.InstagramStickerAdapter;
-
-import ly.img.android.sdk.models.config.interfaces.StickerConfigInterface;
-import ly.img.android.sdk.models.constant.EditMode;
-import ly.img.android.sdk.models.state.EditorShowState;
-import ly.img.android.sdk.models.state.LayerListSettings;
-import ly.img.android.sdk.models.state.PESDKConfig;
-import ly.img.android.sdk.models.state.layer.ImageStickerLayerSettings;
-import ly.img.android.sdk.models.state.layer.StickerLayerSettings;
-import ly.img.android.sdk.models.state.manager.StateHandler;
-import ly.img.android.sdk.utils.Trace;
-import ly.img.android.sdk.views.abstracts.ImgLyUIRelativeContainer;
+import ly.img.pesdk_instagram_ui.app.utils.AssetsUtils;
 
 /**
  * Created by niklasbachmann on 06.12.17.
@@ -26,6 +24,7 @@ import ly.img.android.sdk.views.abstracts.ImgLyUIRelativeContainer;
 
 public class StickerPanel extends ImgLyUIRelativeContainer implements InstagramStickerAdapter.ListItemClickListener {
 
+    private View header;
     private RecyclerView stickerList;
 
     private EditorShowState editorState;
@@ -52,17 +51,20 @@ public class StickerPanel extends ImgLyUIRelativeContainer implements InstagramS
         init();
     }
 
-    private void init () {
+    private void init() {
         setVisibility(GONE);
 
         stickerList = (RecyclerView) findViewById(R.id.rv_stickers);
+        header = findViewById(R.id.header);
 
         InstagramStickerAdapter stickerAdapter = new InstagramStickerAdapter(this);
-        stickerAdapter.setStickerData(getStateHandler().getStateModel(PESDKConfig.class).getStickerConfig().get(0).getStickerList());
+        stickerAdapter.setStickerData(AssetsUtils.getStickers());
 
         stickerList.setLayoutManager(new GridLayoutManager(getContext(), 5));
         stickerList.setHasFixedSize(true);
         stickerList.setAdapter(stickerAdapter);
+
+        header.setOnClickListener(v -> onPanelClose());
     }
 
     @Override
@@ -74,22 +76,22 @@ public class StickerPanel extends ImgLyUIRelativeContainer implements InstagramS
     public void switchVisibility(boolean isVisible) {
         if (isVisible) {
             setVisibility(VISIBLE);
-            editorState.setEditMode(EditMode.NORMAL);
+            getLayerListSettings().setSelected(null);
         } else {
             setVisibility(GONE);
         }
     }
 
     @Override
-    public void onStickerListItemClick(StickerConfigInterface clickedSticker) {
+    public void onStickerListItemClick(ImageStickerAsset clickedSticker) {
         addImageSticker(clickedSticker);
         onPanelClose();
     }
 
-    private void addImageSticker(StickerConfigInterface imageSticker) {
-        StickerLayerSettings stickerLayerSettings = new ImageStickerLayerSettings(imageSticker);
-        getLayerListSettings().addLayer(stickerLayerSettings);
-        getLayerListSettings().setSelected(stickerLayerSettings);
+    private void addImageSticker(ImageStickerAsset config) {
+        SpriteLayerSettings spriteLayerSettings = new ImageStickerLayerSettings(config);
+        getLayerListSettings().addLayer(spriteLayerSettings);
+        getLayerListSettings().setSelected(spriteLayerSettings);
     }
 
     protected LayerListSettings getLayerListSettings() {
@@ -105,7 +107,7 @@ public class StickerPanel extends ImgLyUIRelativeContainer implements InstagramS
         this.onPanelCloseListener = onPanelCloseListener;
     }
 
-    public void onPanelClose(){
+    public void onPanelClose() {
         if (onPanelCloseListener != null) {
             onPanelCloseListener.onPanelClose(this);
         }

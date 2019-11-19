@@ -60,7 +60,7 @@
                 android:focusable="false"
                 android:background="@drawable/imgly_button_click_overlay"
                 android:textColor="@color/iui_black"
-                style="@style/Imgly.Button"/>
+                />
             <Button
                 android:id="@+id/agreeButton"
                 android:layout_width="88dp"
@@ -68,7 +68,7 @@
                 android:text="@string/imgly_photo_editor_cancel_image_yes"
                 android:background="@drawable/imgly_button_click_overlay"
                 android:textColor="@color/iui_black"
-                style="@style/Imgly.Button"/>
+                />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

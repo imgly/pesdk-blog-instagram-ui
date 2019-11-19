@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 
 apply plugin: 'ly.img.android.sdk'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 
 imglyConfig {
@@ -17,6 +20,7 @@ imglyConfig {
     modules {
         // Add all the UI modules you are need
         include 'ui:core'
+        include 'ui:sticker'
 
         include 'backend:text'
         include 'backend:brush'
@@ -29,9 +33,6 @@ imglyConfig {
 
         // Add asset packs if you need
         include 'assets:font-basic'
-        include 'assets:frame-basic'
-        include 'assets:filter-basic'
-        include 'assets:overlay-basic'
         include 'assets:sticker-shapes'
         include 'assets:sticker-emoticons'
     }
@@ -88,6 +89,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.50"
 
 //    api 'ly.img.android:photo-editor-sdk:5.0.16'
 //    annotationProcessor 'ly.img.android:build-processor:5.0.16'

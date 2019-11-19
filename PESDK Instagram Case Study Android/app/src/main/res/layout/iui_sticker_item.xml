@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="96dp">
-    <ly.img.android.ui.widgets.ImageSourceView
+    <ly.img.android.pesdk.ui.widgets.ImageSourceView
         android:id="@+id/iui_sticker_item"
         android:layout_width="96dp"
         android:layout_height="match_parent"

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ly.img.android.ui.widgets.EditorRootView
+<ly.img.android.pesdk.ui.widgets.EditorRootView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ly.img.android.sdk.views.EditorPreview
+    <ly.img.android.pesdk.backend.views.EditorPreview
         android:id="@+id/editorImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -32,4 +32,4 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:visibility="gone"/>
-</ly.img.android.ui.widgets.EditorRootView>
+</ly.img.android.pesdk.ui.widgets.EditorRootView>

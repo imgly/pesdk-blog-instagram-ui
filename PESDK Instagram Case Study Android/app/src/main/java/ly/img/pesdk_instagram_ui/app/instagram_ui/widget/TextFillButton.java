@@ -1,15 +1,12 @@
 package ly.img.pesdk_instagram_ui.app.instagram_ui.widget;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
 
 import ly.img.pesdk_instagram_ui.app.R;
-
-import ly.img.android.sdk.utils.Trace;
 
 /**
  * Created by niklasbachmann on 06.12.17.

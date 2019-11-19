@@ -23,13 +23,12 @@ import android.view.View;
 import android.widget.TextView;
 
 
+import ly.img.android.IMGLYEvents;
+import ly.img.android.pesdk.annotations.OnEvent;
+import ly.img.android.pesdk.backend.model.state.ProgressState;
+import ly.img.android.pesdk.backend.model.state.manager.StateHandler;
+import ly.img.android.pesdk.backend.views.abstracts.ImgLyUIRelativeContainer;
 import ly.img.pesdk_instagram_ui.app.R;
-
-import ly.img.android.PESDKEvents;
-import ly.img.android.sdk.models.state.ProgressState;
-import ly.img.android.sdk.models.state.manager.StateHandler;
-import ly.img.android.sdk.views.abstracts.ImgLyUIRelativeContainer;
-import ly.img.sdk.android.annotations.OnEvent;
 
 // TODO: Make sticker layer drawing on a single caching layer and handle redrawing on reordering.
 public class ProgressWindow extends ImgLyUIRelativeContainer {
@@ -65,7 +64,7 @@ public class ProgressWindow extends ImgLyUIRelativeContainer {
     }
 
     @MainThread
-    @OnEvent({PESDKEvents.ProgressState_EXPORT_START, PESDKEvents.ProgressState_EXPORT_FINISH})
+    @OnEvent({IMGLYEvents.ProgressState_EXPORT_START, IMGLYEvents.ProgressState_EXPORT_FINISH})
     protected void onExportStateChanged(ProgressState state) {
         final boolean isExportRunning = state.isExportRunning();
         if (isExportRunning) {
@@ -77,11 +76,11 @@ public class ProgressWindow extends ImgLyUIRelativeContainer {
     }
 
     @MainThread
-    @OnEvent(PESDKEvents.ProgressState_EXPORT_PROGRESS)
+    @OnEvent(IMGLYEvents.ProgressState_EXPORT_PROGRESS)
     protected void onExportProgressChanged(ProgressState state) {
         if (state.isExportRunning()) {
             String progress = (((int) (state.getExportProgress() * 1000)) / 10f) + "%";
-            final String text = resources.getString(R.string.imgly_photo_editor_export_progress, progress);
+            final String text = resources.getString(R.string.pesdk_editor_text_exportProgress, progress);
             textView.setText(text);
         }
     }

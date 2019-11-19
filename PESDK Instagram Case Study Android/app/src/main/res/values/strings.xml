@@ -23,4 +23,11 @@
     <string name="iui_undo_button_text">UNDO</string>
 
     <string name="iui_export_button_text">NEXT</string>
+
+    <string name="pesdk_issue_gallery_not_found">No Gallery-Application installed.</string>
+    <string name="imgly_photo_editor_export_progress_unknown">exporting…</string>
+    <string name="imgly_photo_editor_cancel_image_title">Cancel editing</string>
+    <string name="imgly_photo_editor_cancel_image_content">Are you sure, you want to exit?</string>
+    <string name="imgly_photo_editor_cancel_image_no">No</string>
+    <string name="imgly_photo_editor_cancel_image_yes">Yes</string>
 </resources>

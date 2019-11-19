@@ -5,16 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import ly.img.pesdk_instagram_ui.app.R;
 
 import java.util.List;
 
-import ly.img.android.sdk.decoder.ImageSource;
-import ly.img.android.sdk.models.config.interfaces.StickerConfigInterface;
-import ly.img.android.sdk.models.config.interfaces.StickerListConfigInterface;
-import ly.img.android.ui.widgets.ImageSourceView;
+import ly.img.android.pesdk.backend.model.config.ImageStickerAsset;
+import ly.img.android.pesdk.ui.widgets.ImageSourceView;
+import ly.img.pesdk_instagram_ui.app.R;
+
 
 /**
  * Created by niklasbachmann on 28.11.17.
@@ -24,20 +21,15 @@ public class InstagramStickerAdapter extends RecyclerView.Adapter<InstagramStick
 
     final private ListItemClickListener mOnClickListener;
 
-    private List<StickerConfigInterface> stickerData;
-
-    public void setStickerData(List<StickerConfigInterface> stickerData) {
-        this.stickerData = stickerData;
-
-    }
-
-    public interface ListItemClickListener {
-        void onStickerListItemClick(StickerConfigInterface clickedSticker);
-    }
-
+    private List<ImageStickerAsset> stickerData;
 
     public InstagramStickerAdapter(InstagramStickerAdapter.ListItemClickListener listener) {
         mOnClickListener = listener;
+
+    }
+
+    public void setStickerData(List<ImageStickerAsset> stickerData) {
+        this.stickerData = stickerData;
 
     }
 
@@ -64,15 +56,17 @@ public class InstagramStickerAdapter extends RecyclerView.Adapter<InstagramStick
         return stickerData.size();
     }
 
-
+    public interface ListItemClickListener {
+        void onStickerListItemClick(ImageStickerAsset clickedSticker);
+    }
 
     class StickerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageSourceView listItemStickerView;
 
-        StickerConfigInterface lastBindedSticker;
+        ImageStickerAsset lastBindedSticker;
 
 
-        public StickerViewHolder (View itemView) {
+        public StickerViewHolder(View itemView) {
             super(itemView);
 
             listItemStickerView = (ImageSourceView) itemView.findViewById(R.id.iui_sticker_item);

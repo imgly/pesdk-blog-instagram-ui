@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import ly.img.android.PESDK;
-
 
 public class Application extends android.app.Application {
 
@@ -47,8 +45,6 @@ public class Application extends android.app.Application {
                 }
             });*/
         }
-
-        PESDK.init(this, "LICENSE.dms");
 
         ANALYTICS_TRACK_ID = readPropertyValue(ANALYTICS_TRACK_ID_PROPERTY);
     }

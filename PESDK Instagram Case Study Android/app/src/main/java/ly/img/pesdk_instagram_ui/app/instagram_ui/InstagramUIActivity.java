@@ -19,6 +19,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.MainThread;
@@ -26,7 +27,31 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import ly.img.pesdk_instagram_ui.app.PESDKEvents;
+import ly.img.android.IMGLYEvents;
+import ly.img.android.pesdk.annotations.OnEvent;
+import ly.img.android.pesdk.annotations.StateEvents;
+import ly.img.android.pesdk.backend.model.chunk.SourceRequestAnswerI;
+import ly.img.android.pesdk.backend.model.state.BrushSettings;
+import ly.img.android.pesdk.backend.model.state.EditorLoadSettings;
+import ly.img.android.pesdk.backend.model.state.EditorSaveSettings;
+import ly.img.android.pesdk.backend.model.state.EditorShowState;
+import ly.img.android.pesdk.backend.model.state.HistoryState;
+import ly.img.android.pesdk.backend.model.state.LayerListSettings;
+import ly.img.android.pesdk.backend.model.state.LoadSettings;
+import ly.img.android.pesdk.backend.model.state.ProgressState;
+import ly.img.android.pesdk.backend.model.state.SaveSettings;
+import ly.img.android.pesdk.backend.model.state.layer.ImageStickerLayerSettings;
+import ly.img.android.pesdk.backend.model.state.layer.TextLayerSettings;
+import ly.img.android.pesdk.backend.model.state.manager.StateHandler;
+import ly.img.android.pesdk.backend.views.EditorPreview;
+import ly.img.android.pesdk.ui.activity.EditorActivity;
+import ly.img.android.pesdk.ui.activity.ImgLyActivity;
+import ly.img.android.pesdk.ui.activity.ImgLyIntent;
+import ly.img.android.pesdk.ui.utils.PermissionRequest;
+import ly.img.android.pesdk.ui.widgets.ConfirmPopupView;
+import ly.img.android.pesdk.utils.OrientationSensor;
+import ly.img.android.pesdk.utils.ThreadUtils;
+import ly.img.android.pesdk.utils.TimeOut;
 import ly.img.pesdk_instagram_ui.app.R;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.panel.BrushPanel;
 import ly.img.pesdk_instagram_ui.app.instagram_ui.panel.OnPanelCloseListener;
@@ -39,29 +64,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import ly.img.android.acs.Camera;
-import ly.img.android.sdk.models.chunk.SourceRequestAnswerI;
-import ly.img.android.sdk.models.constant.EditMode;
-import ly.img.android.sdk.models.state.EditorLoadSettings;
-import ly.img.android.sdk.models.state.EditorSaveSettings;
-import ly.img.android.sdk.models.state.EditorShowState;
-import ly.img.android.sdk.models.state.HistoryState;
-import ly.img.android.sdk.models.state.LayerListSettings;
-import ly.img.android.sdk.models.state.ProgressState;
-import ly.img.android.sdk.models.state.layer.BrushLayerSettings;
-import ly.img.android.sdk.models.state.layer.ImageStickerLayerSettings;
-import ly.img.android.sdk.models.state.layer.TextLayerSettings;
-import ly.img.android.sdk.models.state.manager.StateHandler;
-import ly.img.android.sdk.operator.export.Operator;
-import ly.img.android.sdk.utils.ThreadUtils;
-import ly.img.android.sdk.utils.TimeOut;
-import ly.img.android.sdk.views.EditorPreview;
-import ly.img.android.ui.activities.ImgLyActivity;
-import ly.img.android.ui.activities.ImgLyIntent;
-import ly.img.android.ui.utilities.OrientationSensor;
-import ly.img.android.ui.utilities.PermissionRequest;
-import ly.img.android.ui.widgets.ConfirmPopupView;
-import ly.img.sdk.android.annotations.OnEvent;
-import ly.img.sdk.android.annotations.StateEvents;
 
 @StateEvents
 public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseListener, TimeOut.Callback {
@@ -84,6 +86,7 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
 
     private HistoryState historyState;
     private EditorShowState editorState;
+    private BrushSettings brushSettings;
 
     private LayerListSettings layerListSettings;
 
@@ -109,8 +112,11 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
 
         editorState = getStateHandler().getStateModel(EditorShowState.class);
         historyState = getStateHandler().getStateModel(HistoryState.class);
+        brushSettings = getStateHandler().getStateModel(BrushSettings.class);
+        brushSettings.saveInitState();
 
-        editorState.setEditMode(EditMode.NORMAL);
+        layerListSettings = getStateHandler().getStateModel(LayerListSettings.class);
+        layerListSettings.setSelected(null);
 
         timeOut.addCallback(this);
 
@@ -121,10 +127,10 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
         rootView = findViewById(R.id.rootView);
         editorPreviewView = findView(R.id.editorImageView);
 
-        menuPanel = (RelativeLayout) findViewById(R.id.iui_main_ui);
-        stickerPanel = (StickerPanel) findViewById(R.id.iui_sticker_ui);
-        brushPanel = (BrushPanel) findViewById(R.id.iui_brush_ui);
-        textPanel = (TextPanel) findViewById(R.id.iui_text_ui);
+        menuPanel = findViewById(R.id.iui_main_ui);
+        stickerPanel = findViewById(R.id.iui_sticker_ui);
+        brushPanel = findViewById(R.id.iui_brush_ui);
+        textPanel = findViewById(R.id.iui_text_ui);
 
         stickerPanel.setOnPanelCloseListener(this);
         textPanel.setOnPanelCloseListener(this);
@@ -173,7 +179,7 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
 
         switch (editorMode) {
             case EDITOR_MODE_MENU:
-                editorState.setEditMode(EditMode.NORMAL);
+                getLayerListSettings().setSelected(null);
                 break;
             case EDITOR_MODE_STICKER:
             case EDITOR_MODE_BRUSH:
@@ -192,7 +198,7 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
 
     }
 
-    @OnEvent(PESDKEvents.LayerListSettings_SELECTED_LAYER)
+    @OnEvent(IMGLYEvents.LayerListSettings_SELECTED_LAYER)
     protected void onStickerSelect(LayerListSettings settings) {
         LayerListSettings.LayerSettings selected = settings.getSelected();
         if (selected != null) {
@@ -208,7 +214,11 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
     private void closeEditor() {
         final Intent result = new Intent();
         result.putExtra(ImgLyIntent.SETTINGS_LIST, getStateHandler().createSettingsListDump());
-        result.putExtra(ImgLyIntent.SOURCE_IMAGE_PATH, getStateHandler().getSettingsModel(EditorLoadSettings.class).getImageSourcePath());
+        Uri input = getStateHandler().getSettingsModel(EditorLoadSettings.class).getImageSource();
+        if (input != null && input.getScheme() != null) {
+            result.putExtra(ImgLyIntent.SOURCE_IMAGE_PATH, isFileSchema(input) ? input.getPath() : input.toString());
+        }
+        result.putExtra(ImgLyIntent.SOURCE_IMAGE_URI, getStateHandler().getSettingsModel(EditorLoadSettings.class).getImageSource());
         setResult(RESULT_CANCELED, result);
         finish();
     }
@@ -236,28 +246,20 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
         StateHandler stateHandler = getStateHandler();
         stateHandler.getStateModel(ProgressState.class).notifyExportStart();
 
-        EditorLoadSettings loadSettings = stateHandler.getStateModel(EditorLoadSettings.class);
-        EditorSaveSettings saveSettings = stateHandler.getStateModel(EditorSaveSettings.class);
+        LoadSettings loadSettings = stateHandler.getStateModel(LoadSettings.class);
+        SaveSettings saveSettings = stateHandler.getStateModel(SaveSettings.class);
 
-        if (saveSettings.isExportNecessary() && !loadSettings.isImageIsBroken()) {
-            stateHandler.getStateModel(EditorSaveSettings.class).saveImage(new Operator.Callback() {
-                @Override
-                public void onOperatorResult(Operator operator, SourceRequestAnswerI result) {
-                    StateHandler stateHandler = operator.getStateHandler();
 
-                    EditorLoadSettings loadSettings = stateHandler.getStateModel(EditorLoadSettings.class);
-                    EditorSaveSettings saveSettings = stateHandler.getStateModel(EditorSaveSettings.class);
-
-                    String inputPath = loadSettings.getImageSourcePath();
-                    String outputPath = saveSettings.generateOutputFilePath();
-
-                    onImageReady(inputPath, outputPath, saveSettings.getSavePolicy());
-                }
+        if (saveSettings.isExportNecessary()) {
+            saveSettings.saveImage((stateHandler1, inputPath, outputPath) -> {
+                SaveSettings saveSettings1 = stateHandler1.getStateModel(SaveSettings.class);
+                onImageReady(inputPath, outputPath, saveSettings1.getSavePolicy());
             });
         } else {
-            String inputPath = loadSettings.getImageSourcePath();
+            Uri inputPath = loadSettings.getSource();
             onImageReady(inputPath, inputPath, saveSettings.getSavePolicy());
         }
+
     }
 
     @Override
@@ -275,10 +277,6 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
     @Override
     protected void onResume() {
         super.onResume();
-        OrientationSensor.getInstance().start(getConfig().getEditorScreenRotationMode());
-        try {
-            Camera.getInstance().stopPreview(true);
-        } catch (Exception ignored) {}
     }
 
     @Override
@@ -293,32 +291,48 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
         OrientationSensor.getInstance().stop();
     }
 
-    public void onImageReady(final String input, final String output, final EditorSaveSettings.SavePolicy savePolicy) {
-        ThreadUtils.getWorker().addTask(new ThreadUtils.SequencedThreadRunnable("OnResultSave") {
+    public void onImageReady(final Uri input, final Uri output, final SaveSettings.SavePolicy savePolicy) {
+        ThreadUtils.getWorker().addTask(new ThreadUtils.SequencedThreadRunnable("OnResultSaving") {
             @Override
             public void run() {
                 final Intent result = new Intent();
                 result.putExtra(ImgLyIntent.SETTINGS_LIST, getStateHandler().createSettingsListDump());
-                switch (savePolicy){
+
+                switch (savePolicy) {
                     case KEEP_SOURCE_AND_CREATE_ALWAYS_OUTPUT:
                     case KEEP_SOURCE_AND_CREATE_OUTPUT_IF_NECESSARY:
-                        result.putExtra(ImgLyIntent.SOURCE_IMAGE_PATH, input);
-                        result.putExtra(ImgLyIntent.RESULT_IMAGE_PATH, output);
+                        result.putExtra(ImgLyIntent.SOURCE_IMAGE_PATH, isFileSchema(input) ? input.getPath() : input.toString());
+                        result.putExtra(ImgLyIntent.SOURCE_IMAGE_URI, input);
+                        result.putExtra(ImgLyIntent.RESULT_IMAGE_PATH, isFileSchema(output) ? output.getPath() : output.toString());
+                        result.putExtra(ImgLyIntent.RESULT_IMAGE_URI, output);
+
                         break;
                     case RETURN_ALWAYS_ONLY_OUTPUT:
                     case RETURN_SOURCE_OR_CREATE_OUTPUT_IF_NECESSARY:
-                        result.putExtra(ImgLyIntent.RESULT_IMAGE_PATH, output);
+                        //result.putExtra(CameraPreviewActivity.SOURCE_IMAGE_PATH, (String) null);
+                        result.putExtra(ImgLyIntent.RESULT_IMAGE_PATH, isFileSchema(output) ? output.getPath() : output.toString());
+                        result.putExtra(ImgLyIntent.RESULT_IMAGE_URI, output);
                         if (input != null) {
-                            File file = new File(input);
+                            File file = new File(input.getPath());
                             if (file.exists()) {
+                                //noinspection ResultOfMethodCallIgnored
                                 file.delete();
+
+
                             }
                         }
+
                     case RENDER_NOTHING_RETURN_SOURCE_AND_SETTINGS_LIST:
-                        result.putExtra(ImgLyIntent.SOURCE_IMAGE_PATH, input);
+                        if (input != null) {
+                            result.putExtra(ImgLyIntent.SOURCE_IMAGE_PATH, isFileSchema(input) ? input.getPath() : input.toString());
+                            result.putExtra(ImgLyIntent.SOURCE_IMAGE_URI, input);
+                        }
+
                         break;
-                    default: throw new RuntimeException("Unsupported save policy");
+                    default:
+                        throw new RuntimeException("Unsupported save policy");
                 }
+
                 runOnUi(new ThreadUtils.MainThreadRunnable() {
                     @Override
                     public void run() {
@@ -329,6 +343,10 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
                 });
             }
         });
+    }
+
+    private boolean isFileSchema(Uri uri) {
+        return "file".equals(uri.getScheme());
     }
 
     protected LayerListSettings getLayerListSettings() {
@@ -345,11 +363,11 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
     }
 
     @MainThread
-    @OnEvent(value = PESDKEvents.EditorShowState_LAYER_TOUCH_END)
+    @OnEvent(value = IMGLYEvents.EditorShowState_LAYER_TOUCH_END)
     void onLayerTouchEnd() {
 
-        if (editorState.getEditMode() == EditMode.BRUSH) {
-            historyState.save(1, BrushLayerSettings.class);
+        if (brushSettings.isInEditMode) {
+            historyState.save(0, BrushSettings.class);
             brushPanel.onBrushEnd();
         }
 
@@ -358,7 +376,7 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
         updateUiVisibilityStatus();
     }
 
-    @OnEvent(value = ly.img.android.PESDKEvents.EditorShowState_LAYER_DOUBLE_TAPPED, doInitCall = false)
+    @OnEvent(value = ly.img.android.IMGLYEvents.EditorShowState_LAYER_DOUBLE_TAPPED, doInitCall = false)
     public void onStickerDoubleTapped(){
         if (layerListSettings != null && (layerListSettings.getSelected() instanceof TextLayerSettings)) {
             switchEditorMode(EDITOR_MODE_EDIT_TEXT);
@@ -367,7 +385,7 @@ public class InstagramUIActivity extends ImgLyActivity implements OnPanelCloseLi
 
     // todo: fix animation or delete
     @MainThread
-    @OnEvent(value = ly.img.android.PESDKEvents.EditorShowState_LAYER_TOUCH_START)
+    @OnEvent(value = ly.img.android.IMGLYEvents.EditorShowState_LAYER_TOUCH_START)
     void onLayerTouchStart() {
         if (!canvasTouched) {
             canvasTouched = true;
