@@ -305,7 +305,7 @@ public class TextPanel extends ImgLyUIRelativeContainer implements InstagramColo
     @Override
     public void onGlobalLayout() {
         if (this.getRootView() != null) {
-            Rect visibleDisplayFrame = ViewUtils.obtainScreenVisibleDisplayFrame(this.getRootView());
+            Rect visibleDisplayFrame = RectRecycler.obtain();
             this.getRootView().getWindowVisibleDisplayFrame(visibleDisplayFrame);
 
             int[] colorListWindowPos = new int[2];

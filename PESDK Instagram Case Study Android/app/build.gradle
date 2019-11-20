@@ -53,8 +53,6 @@ android {
         targetSdkVersion 29
         versionCode 2
         versionName "7.0.9"
-//        renderscriptTargetApi 23
-//        renderscriptSupportModeEnabled true
     }
 
     compileOptions {
@@ -76,23 +74,11 @@ android {
         }
     }
 
-//    packagingOptions {
-//        pickFirst 'lib/armeabi-v7a/libRSSupport.so'
-//        pickFirst 'lib/x86/libRSSupport.so'
-//        pickFirst 'lib/mips/libRSSupport.so'
-//        pickFirst 'lib/armeabi-v7a/librsjni.so'
-//        pickFirst 'lib/x86/librsjni.so'
-//        pickFirst 'lib/mips/librsjni.so'
-//    }
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.50"
-
-//    api 'ly.img.android:photo-editor-sdk:5.0.16'
-//    annotationProcessor 'ly.img.android:build-processor:5.0.16'
 
 }
