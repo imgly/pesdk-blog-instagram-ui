@@ -189,7 +189,7 @@ class TextViewController: UIViewController {
   
   @IBAction func textFieldDidChange(_ sender: UITextField) {
     textSpriteModel.text = sender.text
-    textSpriteModel.normalizedWidth = convertToRelativeValue(from: textField.bounds.width * 1.3)
+    textSpriteModel.normalizedWidth = convertToRelativeValue(from: textField.bounds.width * 1.5)
   }
 }
 
