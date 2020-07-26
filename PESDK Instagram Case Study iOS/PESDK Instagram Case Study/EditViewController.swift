@@ -474,7 +474,9 @@ extension EditViewController: StickerViewControllerDelegate {
   func stickerViewControllerDidFinish(_ controller: StickerViewController, stickerModel: StickerSpriteModel?) {
     if let model = stickerModel {
       previewViewController?.photoEditModel.spriteModels.append(model)
-      stickerSpriteEditViewController?.photoEditModel.spriteModels.append(model)
+    }
+    if let updatedModel = previewViewController?.photoEditModel {
+      textSpriteEditViewController?.photoEditModel = updatedModel
     }
     
     showControls(completion: nil)
