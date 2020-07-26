@@ -58,7 +58,10 @@ extension ColorSelectionView: UICollectionViewDataSource {
     var defaultColors = ColorToolControllerOptionsBuilder().availableColors
     defaultColors.removeFirst()
     
-    return defaultColors
+    let finalColors: [UIColor] = defaultColors.compactMap { (color) -> UIColor? in
+        return color.color
+    }
+    return finalColors
   }()
   
   func numberOfSections(in collectionView: UICollectionView) -> Int {
