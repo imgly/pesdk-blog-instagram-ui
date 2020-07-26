@@ -172,10 +172,11 @@ class EditViewController: UIViewController {
       var image = canvasView.painting.ciImage(with: canvasView.painting.dimensions, backgroundColor: .clear) {
       image = image.transformed(by: CGAffineTransform(scaleX: 1, y: -1))
       image = image.transformed(by: CGAffineTransform(translationX: -image.extent.origin.x, y: -image.extent.origin.y))
-      assetManager.setCIImage(image, forIdentifier: brushSpriteModel.uuid.uuidString)
+      let asset = ImageAsset(ciImage: image)
+      assetManager.setImageAsset(asset, forIdentifier: brushSpriteModel.uuid.uuidString)
     }
     
-    let photoEditRenderer = PhotoEditRenderer()
+    let photoEditRenderer = PhotoEditRenderer.init(productType: .pesdk)
     photoEditRenderer.photoEditModel = photoEditModel
     photoEditRenderer.originalImage = CIImage(image: originalImage)
     photoEditRenderer.assetManager = assetManager
@@ -187,10 +188,10 @@ class EditViewController: UIViewController {
             print(error.localizedDescription)
           }
         }
-        
-        self.present(activityViewController, animated: true)
-      }
-      
+          DispatchQueue.main.async {
+              self.present(activityViewController, animated: true)
+          }
+        }
       DispatchQueue.main.async {
         self.hideProgressIndicator()
       }
@@ -263,40 +264,48 @@ class EditViewController: UIViewController {
 
 // MARK: - PhotoEditor SDK Delegates
 
-extension EditViewController: PhotoEditPreviewControllerDelegate {
-  func photoEditPreviewControllerPreviewEnabled(_ photoEditPreviewController: PhotoEditPreviewController) -> Bool {
-    return true
+extension EditViewController: MediaEditPreviewControllerDelegate {
+  func mediaEditPreviewControllerPreviewEnabled(_ mediaEditPreviewController: MediaEditPreviewController) -> Bool {
+      return true
   }
-  
-  func photoEditPreviewControllerRenderMode(_ photoEditPreviewController: PhotoEditPreviewController) -> PESDKRenderMode {
-    return .all
-  }
-  
-  func photoEditPreviewControllerBackgroundColor(_ photoEditPreviewController: PhotoEditPreviewController) -> UIColor {
-    return .black
-  }
-  
-  func photoEditPreviewControllerPreviewInsets(_ photoEditPreviewController: PhotoEditPreviewController) -> UIEdgeInsets {
-    let viewSize = view.bounds.size
-    let imageSize = UIImage(named: "sample")!.size
-    let imageAspectRatio = imageSize.height / imageSize.width
-    let imageHeightInView = viewSize.width * imageAspectRatio
-    let yDifference = viewSize.height - imageHeightInView
 
-    return UIEdgeInsets(top: 0, left: 0, bottom: yDifference, right: 0)
+  func mediaEditPreviewControllerRenderMode(_ mediaEditPreviewController: MediaEditPreviewController) -> PESDKRenderMode {
+      return .all
   }
-  
-  func photoEditPreviewControllerPreviewScale(_ photoEditPreviewController: PhotoEditPreviewController) -> CGFloat {
-    return 1.0
+
+  func mediaEditPreviewControllerBackgroundColor(_ mediaEditPreviewController: MediaEditPreviewController) -> UIColor {
+      return .black
   }
-  
-  func photoEditPreviewControllerProxyZoomingActive(_ photoEditPreviewController: PhotoEditPreviewController) -> Bool {
-    return true
+
+  func mediaEditPreviewControllerPreviewInsets(_ mediaEditPreviewController: MediaEditPreviewController) -> UIEdgeInsets {
+      let viewSize = view.bounds.size
+      let imageSize = UIImage(named: "sample")!.size
+      let imageAspectRatio = imageSize.height / imageSize.width
+      let imageHeightInView = viewSize.width * imageAspectRatio
+      let yDifference = viewSize.height - imageHeightInView
+
+      return UIEdgeInsets(top: 0, left: 0, bottom: yDifference, right: 0)
   }
-  
-  func photoEditPreviewControllerResetProxyZooming(_ photoEditPreviewController: PhotoEditPreviewController) {}
-  
-  func photoEditPreviewControllerDidChangePhotoEditModel(_ photoEditPreviewController: PhotoEditPreviewController) {}
+
+  func mediaEditPreviewControllerPreviewScale(_ mediaEditPreviewController: MediaEditPreviewController) -> CGFloat {
+      return 1.0
+  }
+
+  func mediaEditPreviewControllerProxyZoomingActive(_ mediaEditPreviewController: MediaEditPreviewController) -> Bool {
+      return true
+  }
+
+  func mediaEditPreviewControllerResetProxyZooming(_ mediaEditPreviewController: MediaEditPreviewController) {}
+
+  func mediaEditPreviewControllerPlaybackEnabled(_ mediaEditPreviewController: MediaEditPreviewController) -> Bool {
+      return true
+  }
+
+  func mediaEditPreviewControllerDidChangePhotoEditModel(_ mediaEditPreviewController: MediaEditPreviewController) {}
+
+  func mediaEditPreviewControllerConfiguration(_ mediaEditPreviewController: MediaEditPreviewController) -> Configuration {
+      return Configuration()
+  }
 }
 
 extension EditViewController: SpriteEditControllerDelegate {
